@@ -48,7 +48,7 @@ public class CrowdLoginModule implements LoginModule {
       String name = nameCallback.getName();
       String password = String.valueOf(passwordCallback.getPassword());
       logger.debug("name: " + name + " password: " + password);
-      if (name != null && name.equals("bborbe123") && password != null
+      if (name != null && name.equals("bborbe") && password != null
           && password.equals("test123")) {
         login = name;
         userGroups = new ArrayList<>();
