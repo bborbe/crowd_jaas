@@ -2,6 +2,42 @@
 
 Basic Crowd Jaas implementation WITHOUT external dependencies.
 
+## Setup
+
+### Copy crowd-jaas.jar 
+
+`mkdir /opt/crowd-client/`
+
+`cp target/crowd-jaas.jar /opt/crowd-client/` 
+
+### Create crowd.conf
+
+`vi /etc/tomcat7/crowd.conf`
+
+```
+Crowd {
+ de.benjaminborbe.jaas.crowd.CrowdLoginModule required
+ application.name="tomcat" application.password="xxx"
+ crowd.base.url="http://127.0.0.1:18680/crowd/";
+};
+```
+
+### Add /opt/crowd-client to common-loader
+
+`vi /etc/tomcat7/catalina.properties`
+
+```
+common.loader="${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,${catalina.home}/common/classes,${catalina.home}/common/*.jar,/opt/crowd-client,/opt/crowd-client/*.jar"
+```
+
+### Add java.security.auth.login.conf to JAVA_OPTS
+
+`vi /etc/default/tomcat7`
+
+`JAVA_OPTS="-Djava.security.auth.login.config=/etc/tomcat7/crowd.conf"`
+
+
+
 ## Continuous integration
 
 [Jenkins](https://www.benjamin-borbe.de/jenkins/job/Crowd-Jaas/)
