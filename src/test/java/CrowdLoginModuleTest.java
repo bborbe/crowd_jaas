@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
@@ -16,9 +17,9 @@ public class CrowdLoginModuleTest {
 
   @Test
   public void testLogin() throws Exception {
-    CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
-    Subject subject = null;
-    CallbackHandler callbackHandler = new CallbackHandler() {
+    final CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
+    final Subject subject = null;
+    final CallbackHandler callbackHandler = new CallbackHandler() {
 
       @Override
       public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -28,9 +29,9 @@ public class CrowdLoginModuleTest {
         passwordCallback.setPassword("test123".toCharArray());
       }
     };
-    Map<String, ?> sharedState = null;
-    Map<String, ?> options = null;
+    final Map<String, ?> sharedState = new HashMap<>();
+    final Map<String, ?> options = new HashMap<>();
     crowdLoginModule.initialize(subject, callbackHandler, sharedState, options);
-                          crowdLoginModule.login();
+    crowdLoginModule.login();
   }
 }

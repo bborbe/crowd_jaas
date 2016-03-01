@@ -6,12 +6,12 @@ public class UserPrincipal implements Principal {
 
 	private String name;
 	
-	public UserPrincipal(String name) {
+  public UserPrincipal(final String name) {
 		super();
 		this.name = name;
 	}
 
-	public void setName(String name) {
+  public void setName(final String name) {
 		this.name = name;
 	}
 

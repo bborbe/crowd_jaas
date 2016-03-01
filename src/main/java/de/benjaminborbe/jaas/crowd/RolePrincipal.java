@@ -6,12 +6,12 @@ public class RolePrincipal implements Principal {
 	
 	private String name;
 	
-	public RolePrincipal(String name) {
+  public RolePrincipal(final String name) {
 		super();
 		this.name = name;
 	}
 
-	public void setName(String name) {
+  public void setName(final String name) {
 		this.name = name;
 	}
 
