@@ -1,3 +1,5 @@
+package de.benjaminborbe.jaas.crowd;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -12,12 +14,14 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.benjaminborbe.jaas.crowd.CrowdLoginModule;
 
 public class CrowdLoginModuleTest {
 
+  @Ignore("need crowd server")
   @Test
   public void testLogin() throws Exception {
     final CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
