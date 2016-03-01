@@ -1,4 +1,6 @@
-# Crows Jaas
+# Crowd Jaas
+
+Basic Crowd Jaas implementation WITHOUT external dependencies.
 
 ## Continuous integration
 
