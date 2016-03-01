@@ -14,7 +14,12 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class CrowdLoginModule implements LoginModule {
+
+  private final Log logger = LogFactory.getLog(getClass());
 
   private CallbackHandler handler;
   private Subject subject;
@@ -24,9 +29,7 @@ public class CrowdLoginModule implements LoginModule {
   private List<String> userGroups;
 
   @Override
-  public void initialize(Subject subject, CallbackHandler callbackHandler,
-      Map<String, ?> sharedState, Map<String, ?> options) {
-
+  public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
     handler = callbackHandler;
     this.subject = subject;
   }
@@ -40,20 +43,16 @@ public class CrowdLoginModule implements LoginModule {
 
     try {
       handler.handle(callbacks);
-      String name = ((NameCallback) callbacks[0]).getName();
-      String password = String.valueOf(((PasswordCallback) callbacks[1])
-          .getPassword());
-
-      // Here we validate the credentials against some
-      // authentication/authorization provider.
-      // It can be a Database, an external LDAP, a Web Service, etc.
-      // For this tutorial we are just checking if user is "user123" and
-      // password is "pass123"
-      if (name != null && name.equals("user123") && password != null
-          && password.equals("pass123")) {
+      final NameCallback nameCallback = (NameCallback) callbacks[0];
+      final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
+      String name = nameCallback.getName();
+      String password = String.valueOf(passwordCallback.getPassword());
+      logger.debug("name: " + name + " password: " + password);
+      if (name != null && name.equals("bborbe123") && password != null
+          && password.equals("test123")) {
         login = name;
-        userGroups = new ArrayList<String>();
-        userGroups.add("admin");
+        userGroups = new ArrayList<>();
+        userGroups.add("manager-gui");
         return true;
       }
 
