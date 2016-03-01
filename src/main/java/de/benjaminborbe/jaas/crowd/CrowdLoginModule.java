@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -14,12 +16,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class CrowdLoginModule implements LoginModule {
 
-  private final Log logger = LogFactory.getLog(getClass());
+  private static final Logger log = Logger.getLogger(CrowdLoginModule.class.getName());
 
   private CallbackHandler handler;
   private Subject subject;
@@ -47,7 +46,7 @@ public class CrowdLoginModule implements LoginModule {
       final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
       String name = nameCallback.getName();
       String password = String.valueOf(passwordCallback.getPassword());
-      logger.debug("name: " + name + " password: " + password);
+      log.log(Level.INFO, "name: " + name + " password: " + password);
       if (name != null && name.equals("bborbe") && password != null
           && password.equals("test123")) {
         login = name;
