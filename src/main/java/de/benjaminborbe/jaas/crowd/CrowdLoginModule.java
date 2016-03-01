@@ -40,7 +40,7 @@ public class CrowdLoginModule implements LoginModule {
     this.handler = callbackHandler;
     this.subject = subject;
     final String name = getString(options, "application.name");
-    final String url = getString(options, "crowd.server.url");
+    final String url = getString(options, "crowd.base.url");
     final String password = getString(options, "application.password");
     restService = new RestService(url, name, password);
   }
