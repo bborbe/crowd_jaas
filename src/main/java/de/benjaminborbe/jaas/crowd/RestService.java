@@ -7,16 +7,16 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// https://developer.atlassian.com/display/CROWDDEV/Crowd+REST+Resources
 public class RestService {
 
-  private static final Logger log = Logger.getLogger(RestService.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(RestService.class.getName());
 
   private final String crowdBaseUrl;
 
@@ -30,8 +30,6 @@ public class RestService {
     this.applicationPassword = applicationPassword;
   }
 
-  // https://developer.atlassian.com/display/CROWDDEV/Crowd+REST+Resources
-
   public boolean verifyLogin(final String username, final char[] password) {
     final StringBuffer sb = new StringBuffer();
     sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -41,12 +39,13 @@ public class RestService {
     sb.append("</value>");
     sb.append("</password>");
     final Response returnCode = post(this.crowdBaseUrl + "rest/usermanagement/latest/authentication?username=" + username, sb.toString());
-    log.log(Level.INFO, "login returncode = " + returnCode);
-    return returnCode.isSuccess();
+    final boolean success = returnCode.isSuccess();
+    LOGGER.log(Level.FINE, String.format("login for user %s %s", username, success ? "success" : "fail"));
+    return success;
   }
 
   private Response post(final String url, final String content) {
-    log.log(Level.INFO, "post url: " + url);
+    LOGGER.log(Level.FINE, String.format("post url: %s", url));
     try {
       final String type = "text/xml";
       final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -59,7 +58,7 @@ public class RestService {
       os.write(content.getBytes());
       return new Response(conn.getResponseCode());
     } catch (final IOException e) {
-      log.log(Level.INFO, "post failed", e);
+      LOGGER.log(Level.WARNING, String.format("post request to %s failed", url), e);
       return new Response(500);
     }
   }
@@ -76,8 +75,9 @@ public class RestService {
       return Collections.emptyList();
     }
     final String content = new String(response.getContent());
-    log.log(Level.INFO, content);
-    return parseGroups(content);
+    final List<String> groups = parseGroups(content);
+    LOGGER.log(Level.FINE, String.format("groups for user %s %s", username, groups));
+    return groups;
   }
 
   protected static List<String> parseGroups(final String content) {
@@ -102,7 +102,7 @@ public class RestService {
   }
 
   private Response get(final String url) {
-    log.log(Level.INFO, "get url: " + url);
+    LOGGER.log(Level.FINE, "get url: " + url);
     try {
       final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
       conn.setRequestProperty("Authorization", "Basic " + basicAuth(applicationName, applicationPassword));
@@ -119,7 +119,7 @@ public class RestService {
       buffer.flush();
       return new Response(conn.getResponseCode(), buffer.toByteArray());
     } catch (final IOException e) {
-      log.log(Level.INFO, "get failed", e);
+      LOGGER.log(Level.WARNING, String.format("get request to %s failed", url), e);
       return new Response(500);
     }
   }

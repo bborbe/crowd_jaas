@@ -1,7 +1,6 @@
 package de.benjaminborbe.jaas.crowd;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,7 +17,7 @@ import javax.security.auth.spi.LoginModule;
 
 public class CrowdLoginModule implements LoginModule {
 
-  private static final Logger log = Logger.getLogger(CrowdLoginModule.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(CrowdLoginModule.class.getName());
 
   private CallbackHandler handler;
 
@@ -42,6 +41,9 @@ public class CrowdLoginModule implements LoginModule {
     final String name = getString(options, "application.name");
     final String url = getString(options, "crowd.base.url");
     final String password = getString(options, "application.password");
+    LOGGER.log(Level.FINE, String.format("crowd base url %s", url));
+    LOGGER.log(Level.FINE, String.format("crowd application name %s", name));
+    LOGGER.log(Level.FINE, String.format("crowd application password length %d", password.length()));
     restService = new RestService(url, name, password);
   }
 
@@ -51,35 +53,34 @@ public class CrowdLoginModule implements LoginModule {
 
   @Override
   public boolean login() throws LoginException {
-
-    final Callback[] callbacks = new Callback[2];
-    callbacks[0] = new NameCallback("login");
-    callbacks[1] = new PasswordCallback("password", true);
-
     try {
+      LOGGER.log(Level.FINE, "login");
+      final Callback[] callbacks = new Callback[2];
+      callbacks[0] = new NameCallback("login");
+      callbacks[1] = new PasswordCallback("password", true);
+
       handler.handle(callbacks);
       final NameCallback nameCallback = (NameCallback) callbacks[0];
       final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
       final String name = nameCallback.getName();
       final char[] password = passwordCallback.getPassword();
-      log.log(Level.INFO, "name: " + name + " password: " + String.valueOf(password));
+      LOGGER.log(Level.FINE, String.format("name: %s password-length: %d", name, password.length));
       if (restService.verifyLogin(name, password)) {
         login = name;
         userGroups = restService.getGroups(name);
         return true;
       }
-
       // If credentials are NOT OK we throw a LoginException
       throw new LoginException("Authentication failed");
-
     } catch (final IOException | UnsupportedCallbackException e) {
+      LOGGER.log(Level.WARNING, "verify login failed", e);
       throw new LoginException(e.getMessage());
     }
-
   }
 
   @Override
   public boolean commit() throws LoginException {
+    LOGGER.log(Level.FINE, "commit");
 
     userPrincipal = new UserPrincipal(login);
     subject.getPrincipals().add(userPrincipal);
@@ -96,11 +97,13 @@ public class CrowdLoginModule implements LoginModule {
 
   @Override
   public boolean abort() throws LoginException {
+    LOGGER.log(Level.FINE, "abort");
     return false;
   }
 
   @Override
   public boolean logout() throws LoginException {
+    LOGGER.log(Level.FINE, "logout");
     subject.getPrincipals().remove(userPrincipal);
     subject.getPrincipals().remove(rolePrincipal);
     return true;
