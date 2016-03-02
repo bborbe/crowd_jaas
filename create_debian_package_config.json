@@ -1,0 +1,25 @@
+{
+  "name": "crowd-jaas",
+  "section": "utils",
+  "priority": "optional",
+  "architecture": "all",
+  "maintainer": "Benjamin Borbe <bborbe@rocketnews.de>",
+  "description": "Crowd Jaas",
+  "postinst": "postinst",
+  "depends": [
+    "nexus"
+  ],
+  "files": [
+    {
+      "source": "target/crowd-jaas.jar",
+      "target": "/opt/crowd-jaas/crowd-jaas.jar"
+    }
+  ]
+}
+
+
+
+
+
+
+
