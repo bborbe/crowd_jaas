@@ -20,8 +20,8 @@ case "$1" in
   configure)
     USER="root"
     chown -R ${USER}:${USER} /opt/crowd-jaas/
-    find /opt/crowd-jaas/ -type d -exec chmod 750 "{}" \;
-    find /opt/crowd-jaas/ -type f -exec chmod 640 "{}" \;
+    find /opt/crowd-jaas/ -type d -exec chmod 755 "{}" \;
+    find /opt/crowd-jaas/ -type f -exec chmod 644 "{}" \;
     exit 0
   ;;
 
