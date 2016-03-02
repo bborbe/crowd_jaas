@@ -2,6 +2,7 @@
 
 set -e
 
+echo ${WORKSPACE}
 cd ${WORKSPACE}
 
 PATH="/opt/aptly_utils/bin/:/opt/debian_utils/bin:$PATH"
