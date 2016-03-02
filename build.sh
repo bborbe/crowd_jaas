@@ -2,9 +2,6 @@
 
 set -e
 
-echo ${WORKSPACE}
-cd ${WORKSPACE}
-
 PATH="/opt/aptly_utils/bin/:/opt/debian_utils/bin:$PATH"
 NAME="crowd-jaas"
 VERSION="1.0.1-b${BUILD_NUMBER}"
