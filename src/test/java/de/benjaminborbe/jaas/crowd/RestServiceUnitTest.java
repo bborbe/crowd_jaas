@@ -4,39 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class RestServiceTest {
-
-  @Ignore("need crowd server")
-  @Test
-  public void testVerifyLogin() throws Exception {
-    final RestService restService = new RestService("http://test.hm.benjamin-borbe.de/crowd/", "tomcat", "8Fvar50L");
-    assertThat(restService.verifyLogin("bborbe", "test123".toCharArray()), is(true));
-  }
-
-  @Ignore("need crowd server")
-  @Test
-  public void testVerifyLoginServerPasswordWrong() throws Exception {
-    final RestService restService = new RestService("http://test.hm.benjamin-borbe.de/crowd/", "tomcat", "foo");
-    assertThat(restService.verifyLogin("bborbe", "test123".toCharArray()), is(false));
-  }
-
-  @Ignore("need crowd server")
-  @Test
-  public void testVerifyLoginPasswordWrong() throws Exception {
-    final RestService restService = new RestService("http://test.hm.benjamin-borbe.de/crowd/", "tomcat", "8Fvar50L");
-    assertThat(restService.verifyLogin("bborbe", "foo".toCharArray()), is(false));
-  }
-
-  @Ignore("need crowd server")
-  @Test
-  public void testGetGroups() throws Exception {
-    final RestService restService = new RestService("http://test.hm.benjamin-borbe.de/crowd/", "tomcat", "8Fvar50L");
-    restService.getGroups("bborbe");
-  }
-
+public class RestServiceUnitTest {
   @Test
   public void testParseGroup() throws Exception {
     final String content = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><groups><group name=\"administrators\"></group></groups>";

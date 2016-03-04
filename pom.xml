@@ -16,6 +16,7 @@
     <slf4j.version>1.5.6</slf4j.version>
     <log4j.version>1.2.14</log4j.version>
     <slf4j.impl>slf4j-log4j12</slf4j.impl>
+    <excluded.groups>de.benjaminborbe.jaas.crowd.InternalTest</excluded.groups>
   </properties>
   <build>
     <finalName>crowd-jaas</finalName>
@@ -53,6 +54,7 @@
         <configuration>
           <parallel>methods</parallel>
           <threadCount>10</threadCount>
+          <excludedGroups>${excluded.groups}</excludedGroups>
         </configuration>
       </plugin>
     </plugins>
@@ -65,4 +67,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>integrationtests</id>
+      <properties>
+        <excluded.groups></excluded.groups>
+      </properties>
+    </profile>
+  </profiles>
 </project>

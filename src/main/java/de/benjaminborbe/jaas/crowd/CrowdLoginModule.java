@@ -33,18 +33,25 @@ public class CrowdLoginModule implements LoginModule {
 
   private RestService restService;
 
+  private CrowdConfig crowdConfig;
+
   @Override
   public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String, ?> sharedState,
       final Map<String, ?> options) {
     this.handler = callbackHandler;
     this.subject = subject;
-    final String name = getString(options, "application.name");
-    final String url = getString(options, "crowd.base.url");
-    final String password = getString(options, "application.password");
-    LOGGER.log(Level.FINE, String.format("crowd base url %s", url));
-    LOGGER.log(Level.FINE, String.format("crowd application name %s", name));
-    LOGGER.log(Level.FINE, String.format("crowd application password length %d", password.length()));
-    restService = new RestService(url, name, password);
+    this.crowdConfig = createCrowdConfig(options);
+    this.restService = new RestService(new HttpService());
+  }
+
+  private CrowdConfig createCrowdConfig(final Map<String, ?> options) {
+    final String applicationName = getString(options, "application.applicationName");
+    final String crowdBaseUrl = getString(options, "crowd.base.crowdBaseUrl");
+    final String applicationPassword = getString(options, "application.applicationPassword");
+    LOGGER.log(Level.FINE, String.format("crowd base crowdBaseUrl %s", crowdBaseUrl));
+    LOGGER.log(Level.FINE, String.format("crowd application applicationName %s", applicationName));
+    LOGGER.log(Level.FINE, String.format("crowd application applicationPassword length %d", applicationPassword.length()));
+    return new CrowdConfig(crowdBaseUrl, applicationName, applicationPassword);
   }
 
   private String getString(final Map<String, ?> options, final String key) {
@@ -57,17 +64,17 @@ public class CrowdLoginModule implements LoginModule {
       LOGGER.log(Level.FINE, "login");
       final Callback[] callbacks = new Callback[2];
       callbacks[0] = new NameCallback("login");
-      callbacks[1] = new PasswordCallback("password", true);
+      callbacks[1] = new PasswordCallback("applicationPassword", true);
 
       handler.handle(callbacks);
       final NameCallback nameCallback = (NameCallback) callbacks[0];
       final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
       final String name = nameCallback.getName();
       final char[] password = passwordCallback.getPassword();
-      LOGGER.log(Level.FINE, String.format("name: %s password-length: %d", name, password.length));
-      if (restService.verifyLogin(name, password)) {
+      LOGGER.log(Level.FINE, String.format("applicationName: %s applicationPassword-length: %d", name, password.length));
+      if (restService.verifyLogin(crowdConfig, name, password)) {
         login = name;
-        userGroups = restService.getGroups(name);
+        userGroups = restService.getGroups(crowdConfig, name);
         return true;
       }
       // If credentials are NOT OK we throw a LoginException

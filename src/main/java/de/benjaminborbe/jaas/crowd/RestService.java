@@ -1,13 +1,8 @@
 package de.benjaminborbe.jaas.crowd;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,59 +13,36 @@ public class RestService {
 
   private static final Logger LOGGER = Logger.getLogger(RestService.class.getName());
 
-  private final String crowdBaseUrl;
+  private final HttpService httpService;
 
-  private final String applicationName;
-
-  private final String applicationPassword;
-
-  public RestService(final String crowdBaseUrl, final String applicationName, final String applicationPassword) {
-    this.crowdBaseUrl = crowdBaseUrl;
-    this.applicationName = applicationName;
-    this.applicationPassword = applicationPassword;
+  public RestService(final HttpService httpService) {
+    this.httpService = httpService;
   }
 
-  public boolean verifyLogin(final String username, final char[] password) {
-    final StringBuffer sb = new StringBuffer();
-    sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    sb.append("<password>");
-    sb.append("<value>");
-    sb.append(password);
-    sb.append("</value>");
-    sb.append("</password>");
-    final Response returnCode = post(this.crowdBaseUrl + "rest/usermanagement/latest/authentication?username=" + username, sb.toString());
+  public boolean verifyLogin(final CrowdConfig crowdConfig, final String username, final char[] password) throws MalformedURLException {
+    final StringBuffer content = new StringBuffer();
+    content.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    content.append("<password>");
+    content.append("<value>");
+    content.append(password);
+    content.append("</value>");
+    content.append("</password>");
+    final Response returnCode = httpService.post(
+        buildUrl(crowdConfig.getCrowdBaseUrl() + "rest/usermanagement/latest/authentication?username=" + username),
+        content.toString(), crowdConfig.getApplicationName(), crowdConfig.getApplicationPassword());
     final boolean success = returnCode.isSuccess();
     LOGGER.log(Level.FINE, String.format("login for user %s %s", username, success ? "success" : "fail"));
     return success;
   }
 
-  private Response post(final String url, final String content) {
-    LOGGER.log(Level.FINE, String.format("post url: %s", url));
-    try {
-      final String type = "text/xml";
-      final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-      conn.setRequestProperty("Authorization", "Basic " + basicAuth(applicationName, applicationPassword));
-      conn.setDoOutput(true);
-      conn.setRequestMethod("POST");
-      conn.setRequestProperty("Content-Type", type);
-      conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
-      final OutputStream os = conn.getOutputStream();
-      os.write(content.getBytes());
-      return new Response(conn.getResponseCode());
-    } catch (final IOException e) {
-      LOGGER.log(Level.WARNING, String.format("post request to %s failed", url), e);
-      return new Response(500);
-    }
+  private URL buildUrl(final String url) throws MalformedURLException {
+    return new URL(url);
   }
 
-  private String basicAuth(final String username, final String password) {
-    final Base64.Encoder encoder = Base64.getEncoder();
-    final String content = username + ":" + password;
-    return encoder.encodeToString(content.getBytes());
-  }
-
-  public List<String> getGroups(final String username) {
-    final Response response = get(this.crowdBaseUrl + "rest/usermanagement/latest/user/group/direct?username=" + username);
+  public List<String> getGroups(final CrowdConfig crowdConfig, final String username) throws MalformedURLException {
+    final Response response = httpService.get(
+        buildUrl(crowdConfig.getCrowdBaseUrl() + "rest/usermanagement/latest/user/group/direct?username=" + username),
+        crowdConfig.getApplicationName(), crowdConfig.getApplicationPassword());
     if (!response.isSuccess()) {
       return Collections.emptyList();
     }
@@ -101,55 +73,4 @@ public class RestService {
     }
   }
 
-  private Response get(final String url) {
-    LOGGER.log(Level.FINE, "get url: " + url);
-    try {
-      final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-      conn.setRequestProperty("Authorization", "Basic " + basicAuth(applicationName, applicationPassword));
-      conn.setDoOutput(true);
-      conn.setRequestMethod("GET");
-      final InputStream is = conn.getInputStream();
-      final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      int nRead;
-      final byte[] data = new byte[16384];
-
-      while ((nRead = is.read(data, 0, data.length)) != -1) {
-        buffer.write(data, 0, nRead);
-      }
-      buffer.flush();
-      return new Response(conn.getResponseCode(), buffer.toByteArray());
-    } catch (final IOException e) {
-      LOGGER.log(Level.WARNING, String.format("get request to %s failed", url), e);
-      return new Response(500);
-    }
-  }
-
-  private class Response {
-
-    private final int responseCode;
-
-    private final byte[] content;
-
-    public Response(final int responseCode) {
-      this.responseCode = responseCode;
-      this.content = new byte[0];
-    }
-
-    public byte[] getContent() {
-      return content;
-    }
-
-    public int getResponseCode() {
-      return responseCode;
-    }
-
-    public Response(final int responseCode, final byte[] content) {
-      this.responseCode = responseCode;
-      this.content = content;
-    }
-
-    public boolean isSuccess() {
-      return responseCode / 100 == 2;
-    }
-  }
 }

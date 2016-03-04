@@ -11,7 +11,7 @@ echo "Install completed, create debian package"
 
 create_debian_package \
 -loglevel=DEBUG \
--version=$VERSION \
+-version=${VERSION} \
 -config=create_debian_package_config.json
 
 echo "Create debian package completed, start upload to aptly"
@@ -21,7 +21,7 @@ aptly_upload \
 -url=https://www.benjamin-borbe.de/aptly \
 -username=api \
 -passwordfile=/etc/aptly_api_password \
--file=$DEB \
+-file=${DEB} \
 -repo=unstable
 
 echo "Upload completed"

@@ -14,14 +14,12 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import de.benjaminborbe.jaas.crowd.CrowdLoginModule;
+@Category(InternalTest.class)
+public class CrowdLoginModuleIntegrationTest {
 
-public class CrowdLoginModuleTest {
-
-  @Ignore("need crowd server")
   @Test
   public void testLogin() throws Exception {
     final CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
