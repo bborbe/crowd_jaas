@@ -17,8 +17,8 @@ public class HttpService {
   public HttpService() {
   }
 
-  public Response post(final URL url, final String content, final String applicationName, final String applicationPassword) {
-    LOGGER.log(Level.FINE, String.format("post url: %s", url));
+  public Response post(final URL url, final String body, final String applicationName, final String applicationPassword) {
+    LOGGER.log(Level.INFO, String.format("post url: %s body: %s", url, body));
     try {
       final String contentType = "text/xml";
       final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -26,10 +26,15 @@ public class HttpService {
       conn.setDoOutput(true);
       conn.setRequestMethod("POST");
       conn.setRequestProperty("Content-Type", contentType);
-      conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
+      conn.setRequestProperty("Content-Length", String.valueOf(body.length()));
       final OutputStream os = conn.getOutputStream();
-      os.write(content.getBytes());
-      return new Response(conn.getResponseCode());
+      os.write(body.getBytes());
+      if (conn.getResponseCode() / 100 != 2) {
+        return new Response(conn.getResponseCode());
+      }
+      final byte[] responseContent = getBytes(conn);
+      LOGGER.log(Level.INFO, "response: %s", new String(responseContent));
+      return new Response(conn.getResponseCode(), responseContent);
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, String.format("post request to %s failed", url), e);
       return new Response(500);
@@ -37,29 +42,39 @@ public class HttpService {
   }
 
   public Response get(final URL url, final String applicationName, final String applicationPassword) {
-    LOGGER.log(Level.FINE, String.format("get url: %s", url));
+    LOGGER.log(Level.INFO, String.format("get url: %s", url));
     try {
       final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestProperty("Authorization", "Basic " + basicAuth(applicationName, applicationPassword));
       conn.setDoOutput(true);
       conn.setRequestMethod("GET");
-      final InputStream is = conn.getInputStream();
-      final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      int nRead;
-      final byte[] data = new byte[16384];
-
-      while ((nRead = is.read(data, 0, data.length)) != -1) {
-        buffer.write(data, 0, nRead);
+      if (conn.getResponseCode() / 100 != 2) {
+        return new Response(conn.getResponseCode());
       }
-      buffer.flush();
-      return new Response(conn.getResponseCode(), buffer.toByteArray());
+      final byte[] responseContent = getBytes(conn);
+      LOGGER.log(Level.INFO, "response: %s", new String(responseContent));
+      return new Response(conn.getResponseCode(), responseContent);
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, String.format("get request to %s failed", url), e);
       return new Response(500);
     }
   }
 
+  private byte[] getBytes(final HttpURLConnection conn) throws IOException {
+    final InputStream is = conn.getInputStream();
+    final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    int nRead;
+    final byte[] data = new byte[16384];
+
+    while ((nRead = is.read(data, 0, data.length)) != -1) {
+      buffer.write(data, 0, nRead);
+    }
+    buffer.flush();
+    return buffer.toByteArray();
+  }
+
   private String basicAuth(final String username, final String password) {
+    LOGGER.log(Level.INFO, String.format("auth %s:%s", username, password));
     final Base64.Encoder encoder = Base64.getEncoder();
     final String content = username + ":" + password;
     return encoder.encodeToString(content.getBytes());

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -16,18 +17,34 @@ import org.junit.experimental.categories.Category;
 public class CrowdLoginModuleIntegrationTest {
 
   @Test
-  public void testLogin() throws Exception {
-    final String username = "bborbe";
-    final char[] password = "test123".toCharArray();
+  public void testLoginSuccess() throws Exception {
+    final String username = "sample";
+    final char[] password = "cvwRmFJt".toCharArray();
     final CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
     final CallbackHandler callbackHandler = new DummyCallbackHandler(username, password);
     final Subject subject = new Subject();
     final Map<String, String> sharedState = new HashMap<>();
     final Map<String, String> options = new HashMap<>();
-    options.put(CrowdLoginModule.APPLICATION_NAME, "tomcat");
-    options.put(CrowdLoginModule.APPLICATION_PASSWORD, "8Fvar50L");
-    options.put(CrowdLoginModule.CROWD_SERVER_URL, "http://playground.hm.benjamin-borbe.de/crowd/");
+    options.put(CrowdLoginModule.APPLICATION_NAME, "sample");
+    options.put(CrowdLoginModule.APPLICATION_PASSWORD, "in4402xD");
+    options.put(CrowdLoginModule.CROWD_SERVER_URL, "https://template.codeyard.com/crowd/");
     crowdLoginModule.initialize(subject, callbackHandler, sharedState, options);
     assertThat(crowdLoginModule.login(), is(true));
+  }
+
+  @Test(expected = LoginException.class)
+  public void testLoginFailed() throws Exception {
+    final String username = "sample";
+    final char[] password = "foo".toCharArray();
+    final CrowdLoginModule crowdLoginModule = new CrowdLoginModule();
+    final CallbackHandler callbackHandler = new DummyCallbackHandler(username, password);
+    final Subject subject = new Subject();
+    final Map<String, String> sharedState = new HashMap<>();
+    final Map<String, String> options = new HashMap<>();
+    options.put(CrowdLoginModule.APPLICATION_NAME, "sample");
+    options.put(CrowdLoginModule.APPLICATION_PASSWORD, "in4402xD");
+    options.put(CrowdLoginModule.CROWD_SERVER_URL, "https://template.codeyard.com/crowd/");
+    crowdLoginModule.initialize(subject, callbackHandler, sharedState, options);
+    crowdLoginModule.login();
   }
 }

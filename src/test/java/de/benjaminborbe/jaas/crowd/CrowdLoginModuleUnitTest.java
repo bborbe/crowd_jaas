@@ -30,7 +30,7 @@ public class CrowdLoginModuleUnitTest {
 
   @Test
   public void testLoginSuccess() throws Exception {
-    final String username = "bborbe";
+    final String username = "sample";
     final char[] password = "test123".toCharArray();
     when(restService.verifyLogin(any(CrowdConfig.class), eq(username), eq(password))).thenReturn(true);
     final CallbackHandler callbackHandler = new DummyCallbackHandler(username, password);
@@ -46,7 +46,7 @@ public class CrowdLoginModuleUnitTest {
 
   @Test
   public void testLogoutSuccess() throws Exception {
-    final String username = "bborbe";
+    final String username = "sample";
     final char[] password = "test123".toCharArray();
     when(restService.verifyLogin(any(CrowdConfig.class), eq(username), eq(password))).thenReturn(true);
     final CallbackHandler callbackHandler = new DummyCallbackHandler(username, password);
@@ -64,7 +64,7 @@ public class CrowdLoginModuleUnitTest {
 
   @Test(expected = LoginException.class)
   public void testLoginFail() throws Exception {
-    final String username = "bborbe";
+    final String username = "sample";
     final char[] password = "test123".toCharArray();
     when(restService.verifyLogin(any(CrowdConfig.class), eq(username), eq(password))).thenReturn(false);
     final CallbackHandler callbackHandler = new DummyCallbackHandler(username, password);

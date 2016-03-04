@@ -55,9 +55,9 @@ public class CrowdLoginModule implements LoginModule {
     final String crowdBaseUrl = getString(options, CROWD_SERVER_URL);
     final String applicationName = getString(options, APPLICATION_NAME);
     final String applicationPassword = getString(options, APPLICATION_PASSWORD);
-    LOGGER.log(Level.FINE, String.format("crowd base crowdBaseUrl %s", crowdBaseUrl));
-    LOGGER.log(Level.FINE, String.format("crowd application applicationName %s", applicationName));
-    LOGGER.log(Level.FINE, String.format("crowd application applicationPassword length %d", applicationPassword.length()));
+    LOGGER.log(Level.INFO, String.format("crowd base crowdBaseUrl '%s'", crowdBaseUrl));
+    LOGGER.log(Level.INFO, String.format("crowd application applicationName '%s'", applicationName));
+    LOGGER.log(Level.INFO, String.format("crowd application applicationPassword length %d", applicationPassword.length()));
     return new CrowdConfig(crowdBaseUrl, applicationName, applicationPassword);
   }
 
@@ -68,7 +68,7 @@ public class CrowdLoginModule implements LoginModule {
   @Override
   public boolean login() throws LoginException {
     try {
-      LOGGER.log(Level.FINE, "login");
+      LOGGER.log(Level.INFO, "login");
       final Callback[] callbacks = new Callback[2];
       callbacks[0] = new NameCallback("login");
       callbacks[1] = new PasswordCallback("applicationPassword", true);
@@ -77,7 +77,7 @@ public class CrowdLoginModule implements LoginModule {
       final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
       final String name = nameCallback.getName();
       final char[] password = passwordCallback.getPassword();
-      LOGGER.log(Level.FINE, String.format("applicationName: %s applicationPassword-length: %d", name, password.length));
+      LOGGER.log(Level.INFO, String.format("applicationName: '%s' applicationPassword-length: %d", name, password.length));
       if (restService.verifyLogin(crowdConfig, name, password)) {
         login = name;
         userGroups = restService.getGroups(crowdConfig, name);
@@ -93,7 +93,7 @@ public class CrowdLoginModule implements LoginModule {
 
   @Override
   public boolean commit() throws LoginException {
-    LOGGER.log(Level.FINE, "commit");
+    LOGGER.log(Level.INFO, "commit");
     userPrincipal = new UserPrincipal(login);
     subject.getPrincipals().add(userPrincipal);
     if (userGroups != null && userGroups.size() > 0) {
@@ -107,7 +107,7 @@ public class CrowdLoginModule implements LoginModule {
 
   @Override
   public boolean abort() throws LoginException {
-    LOGGER.log(Level.FINE, "abort");
+    LOGGER.log(Level.INFO, "abort");
     login = null;
     userGroups = null;
     return false;
@@ -115,7 +115,7 @@ public class CrowdLoginModule implements LoginModule {
 
   @Override
   public boolean logout() throws LoginException {
-    LOGGER.log(Level.FINE, "logout");
+    LOGGER.log(Level.INFO, "logout");
     subject.getPrincipals().remove(userPrincipal);
     subject.getPrincipals().remove(rolePrincipal);
     return true;

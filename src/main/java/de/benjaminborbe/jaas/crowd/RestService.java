@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+
 // https://developer.atlassian.com/display/CROWDDEV/Crowd+REST+Resources
 public class RestService {
 
   private static final Logger LOGGER = Logger.getLogger(RestService.class.getName());
 
-  private final HttpService httpService;
+  @Inject
+  private HttpService httpService;
 
   public RestService(final HttpService httpService) {
     this.httpService = httpService;
@@ -31,7 +34,7 @@ public class RestService {
         buildUrl(crowdConfig.getCrowdBaseUrl() + "rest/usermanagement/latest/authentication?username=" + username),
         content.toString(), crowdConfig.getApplicationName(), crowdConfig.getApplicationPassword());
     final boolean success = returnCode.isSuccess();
-    LOGGER.log(Level.FINE, String.format("login for user %s %s", username, success ? "success" : "fail"));
+    LOGGER.log(Level.INFO, String.format("login for user '%s' = %s", username, success ? "success" : "fail"));
     return success;
   }
 
@@ -48,7 +51,7 @@ public class RestService {
     }
     final String content = new String(response.getContent());
     final List<String> groups = parseGroups(content);
-    LOGGER.log(Level.FINE, String.format("groups for user %s %s", username, groups));
+    LOGGER.log(Level.INFO, String.format("groups for user %s %s", username, groups));
     return groups;
   }
 

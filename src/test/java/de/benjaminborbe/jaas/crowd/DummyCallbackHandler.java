@@ -10,9 +10,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 public class DummyCallbackHandler implements CallbackHandler {
 
-  private String username;
+  private final String username;
 
-  private char[] password;
+  private final char[] password;
 
   public DummyCallbackHandler(final String username, final char[] password) {
     this.password = password;
