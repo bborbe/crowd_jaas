@@ -59,7 +59,19 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>tools-releases</id>
+			<url>http://maven-api.maven.svc.cluster.local:8080/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>tools-snapshots</id>
+			<url>http://maven-api.maven.svc.cluster.local:8080/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
