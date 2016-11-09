@@ -10,14 +10,16 @@ DEB="${NAME}_${VERSION}.deb"
 echo "Install completed, create debian package"
 
 create_debian_package \
--loglevel=DEBUG \
+-logtostderr \
+-v=2 \
 -version=${VERSION} \
 -config=create_debian_package_config.json
 
 echo "Create debian package completed, start upload to aptly"
 
 aptly_upload \
--loglevel=DEBUG \
+-logtostderr \
+-v=2 \
 -url=http://aptly-api.aptly.svc.cluster.local:3845 \
 -file=${DEB} \
 -repo=unstable
