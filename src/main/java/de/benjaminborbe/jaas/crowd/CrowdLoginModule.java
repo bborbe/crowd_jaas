@@ -77,7 +77,7 @@ public class CrowdLoginModule implements LoginModule {
       final PasswordCallback passwordCallback = (PasswordCallback) callbacks[1];
       final String name = nameCallback.getName();
       final char[] password = passwordCallback.getPassword();
-      LOGGER.log(Level.INFO, String.format("applicationName: '%s' applicationPassword-length: %d", name, password.length));
+      LOGGER.log(Level.INFO, String.format("username: '%s' password-length: %d", name, password.length));
       if (restService.verifyLogin(crowdConfig, name, password)) {
         login = name;
         userGroups = restService.getGroups(crowdConfig, name);
