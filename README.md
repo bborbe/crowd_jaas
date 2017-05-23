@@ -114,6 +114,10 @@ curl \
 </user>
 ```
 
+## Tomcat Debugging
+
+`echo 'org.apache.catalina.level=INFO' >> /etc/tomcat8/logging.properties`
+
 ## Continuous integration
 
 [Jenkins](https://www.benjamin-borbe.de/jenkins/job/Crowd-Jaas/)
