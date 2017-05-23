@@ -12,20 +12,21 @@ import java.util.logging.Logger;
 
 public class HttpService {
 
-  private static final Logger LOGGER = Logger.getLogger(HttpService.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(HttpService.class.getName());
 
-  public HttpService() {
+	private static final String CONTENT_TYPE = "text/xml";
+
+	public HttpService() {
   }
 
   public Response post(final URL url, final String body, final String applicationName, final String applicationPassword) {
     LOGGER.log(Level.INFO, String.format("post url: %s body: %s", url, body));
     try {
-      final String contentType = "text/xml";
-      final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestProperty("Authorization", "Basic " + basicAuth(applicationName, applicationPassword));
       conn.setDoOutput(true);
       conn.setRequestMethod("POST");
-      conn.setRequestProperty("Content-Type", contentType);
+      conn.setRequestProperty("Content-Type", CONTENT_TYPE);
       conn.setRequestProperty("Content-Length", String.valueOf(body.length()));
       final OutputStream os = conn.getOutputStream();
       os.write(body.getBytes());
