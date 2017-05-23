@@ -14,7 +14,7 @@ public class HttpService {
 
 	private static final Logger LOGGER = Logger.getLogger(HttpService.class.getName());
 
-	private static final String CONTENT_TYPE = "text/xml";
+	private static final String CONTENT_TYPE = "application/xml";
 
 	public HttpService() {
   }
