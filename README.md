@@ -37,7 +37,7 @@ common.loader="${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/
 `JAVA_OPTS="-Djava.security.auth.login.config=/etc/tomcat7/crowd.conf"`
 
 
-## server.xml
+### server.xml
 
 ```
 <Realm className="org.apache.catalina.realm.LockOutRealm">
@@ -48,6 +48,71 @@ common.loader="${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/
 </Realm>
 ```
 
+## Sample Curl
+
+```
+curl \
+-u 'tomcat:xxx' \
+-H 'Content-Type: application/xml' \
+-d '<?xml version="1.0" encoding="UTF-8"?><password><value>xxx</value></password>' \
+'http://127.0.0.1:8680/crowd/rest/usermanagement/latest/authentication?username=sampleuser'
+```
+
+```
+<user expand="attributes" name="sampleuser">
+  <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user?username=sampleuser" rel="self"/>
+  <first-name>Sample</first-name>
+  <last-name>User</last-name>
+  <display-name>Sample User</display-name>
+  <email>sampleuser@example.com</email>
+  <password>
+    <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/password?username=sampleuser" rel="edit"/>
+  </password>
+  <key>32769:dbcced50-5a4d-4a86-8504-0da6e19ceed5</key>
+  <created-date>2016-02-07T15:57:30Z</created-date>
+  <updated-date>2017-05-22T16:39:44.090Z</updated-date>
+  <active>true</active>
+  <attributes>
+    <attribute name="autoGroupsAdded">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=autoGroupsAdded" rel="self"/>
+      <values>
+        <value>true</value>
+      </values>
+    </attribute>
+    <attribute name="invalidPasswordAttempts">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=invalidPasswordAttempts" rel="self"/>
+      <values>
+        <value>0</value>
+      </values>
+    </attribute>
+    <attribute name="lastActive">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=lastActive" rel="self"/>
+      <values>
+        <value>1495547420473</value>
+      </values>
+    </attribute>
+    <attribute name="lastAuthenticated">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=lastAuthenticated" rel="self"/>
+      <values>
+        <value>1495547583277</value>
+      </values>
+    </attribute>
+    <attribute name="passwordLastChanged">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=passwordLastChanged" rel="self"/>
+      <values>
+        <value>1495471184090</value>
+      </values>
+    </attribute>
+    <attribute name="requiresPasswordChange">
+      <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser&amp;attributename=requiresPasswordChange" rel="self"/>
+      <values>
+        <value>false</value>
+      </values>
+    </attribute>
+    <link href="http://127.0.0.1:8680/crowd/rest/usermanagement/latest/user/attribute?username=sampleuser" rel="self"/>
+  </attributes>
+</user>
+```
 
 ## Continuous integration
 
