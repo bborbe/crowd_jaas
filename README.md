@@ -37,6 +37,17 @@ common.loader="${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/
 `JAVA_OPTS="-Djava.security.auth.login.config=/etc/tomcat7/crowd.conf"`
 
 
+## server.xml
+
+```
+<Realm className="org.apache.catalina.realm.LockOutRealm">
+	<Realm className="org.apache.catalina.realm.CombinedRealm">
+		<Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"></Realm>
+		<Realm className="org.apache.catalina.realm.JAASRealm" appName="Crowd" userClassNames="de.benjaminborbe.jaas.crowd.UserPrincipal" roleClassNames="de.benjaminborbe.jaas.crowd.RolePrincipal"></Realm>
+	</Realm>
+</Realm>
+```
+
 
 ## Continuous integration
 
